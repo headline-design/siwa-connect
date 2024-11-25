@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+:root,
+.dark {
+  --dark-foreground: 0deg 0% 0%;
+  --font-sans: var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
+:root {
+  --ds-background-100: #fff;
+  --ds-background-200: #fafafa;
+  --primary-accent: #fff;
+  --primary-foreground: 0 0% 98%;
+  --primary-background: var(--ds-background-200);
+  --muted-foreground: 0deg 0% 26.67%;
+  --muted: 240 4.8% 95.9%;
+  --accents-0: #fff;
+  --accents-1: #fafafa;
+  --accents-2: #eaeaea;
+  --accents-3: #999;
+  --primary: 240 5.9% 10%;
+  --secondary-foreground: 0 0% 98%;
+  --secondary: 240 3.7% 15.9%;
+
+  --base-foreground-accent: rgba(0, 0, 0, 0.15);
+  --themed-foreground: hsla(0, 0%, 9%, 1);
+  --themed-border: rgba(0, 0, 0, .08);
+  --accent-foreground: 240 5.9% 10%;
+  --accent-muted-2: var(--ds-background-200);
+  --accent-muted: var(--ds-gray-100-value);
+  --accent: var(--ds-gray-alpha-200);
+  --rust-secondary: #666;
+  --accents-2: #eaeaea;
+  --accents-4: #888;
+  --background: 0 0% 100%;
+  --border: var(--accents-2);
+  --border-muted: var(--ds-gray-400);
+  --ds-focus-border: 0 0 0 1px var(--ds-gray-alpha-600), 0px 0px 0px 4px rgba(0, 0, 0, .16);
+  --card-shadow: var(--ds-shadow-border), 0 4px 6px rgba(0, 0, 0, .04);
+  --ds-background-100: #fff;
+  --ds-gray-100-value: 0, 0%, 95%;
+  --ds-gray-200: hsla(var(--ds-gray-200-value), 1);
+  --ds-gray-200-value: 0, 0%, 92%;
+  --ds-gray-1000-value: 0, 0%, 9%;
+  --ds-gray-alpha-100: rgba(0, 0, 0, .05);
+  --ds-gray-1000-value: 0, 0%, 9%;
+  --ds-gray-alpha-100: rgba(0, 0, 0, .05);
+  --ds-gray-400: hsla(var(--ds-gray-400-value), 1);
+  --ds-gray-400-value: 0, 0%, 92%;
+  --ds-gray-alpha-400: rgba(0, 0, 0, .08);
+  --ds-gray-600: hsla(var(--ds-gray-600-value), 1);
+  --ds-gray-600-value: 0, 0%, 66%;
+  --ds-gray-1000: hsla(var(--ds-gray-1000-value), 1);
+
+  --ds-red-100-value: 0, 100%, 97%;
+  --ds-red-200-value: 0, 100%, 96%;
+  --ds-red-900-value: 358, 66%, 48%;
+
+  --ds-red-100: hsla(var(--ds-red-100-value), 1);
+  --ds-red-200: hsla(var(--ds-red-200-value), 1);
+  --ds-red-900: hsla(var(--ds-red-900-value), 1);
+}
+
+@media (prefers-color-scheme: dark) {
+
+  :root {
+    --primary-accent: #fff;
+    --primary-foreground: 240 5.9% 10%;
+
+  }
+}
+
+}
+
+body {
+background-color: var(--ds-background-200);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overflow: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+li,
+button,
+div,
+span {
+  font-family: var(--font-geist-sans);
+}
+
+
+
+.themed-border {
+  --themed-bg: var(--ds-background-100);
+  --themed-fg: var(--ds-gray-1000);
+  --themed-border: var(--ds-gray-alpha-400);
+}
+
+.themed-border:hover {
+  background-color: var(--themed-hover-bg);
+  --themed-border: var(--themed-hover-border);
+  color: var(--themed-fg);
+}
+
+.themed-bg {
+  --themed-bg: var(--ds-background-100);
+  --themed-fg: var(--ds-gray-1000);
+
+}
+
+.border-shadow {
+  box-shadow: 0 0 0 1px var(--themed-border, transparent);
+}
+
+.spinner {
+  position: relative;
+  top: 50%;
+  left: 50%;
+}
+.spinner div {
+  animation: spinner 1.2s linear infinite;
+  background: gray;
+  position: absolute;
+  border-radius: 1rem;
+  width: 30%;
+  height: 8%;
+  left: -10%;
+  top: -4%;
+}
+.spinner div:nth-child(1) {
+  animation-delay: -1.2s;
+  transform: rotate(1deg) translate(120%);
+}
+.spinner div:nth-child(2) {
+  animation-delay: -1.1s;
+  transform: rotate(30deg) translate(120%);
+}
+.spinner div:nth-child(3) {
+  animation-delay: -1s;
+  transform: rotate(60deg) translate(120%);
+}
+.spinner div:nth-child(4) {
+  animation-delay: -0.9s;
+  transform: rotate(90deg) translate(120%);
+}
+.spinner div:nth-child(5) {
+  animation-delay: -0.8s;
+  transform: rotate(120deg) translate(120%);
+}
+.spinner div:nth-child(6) {
+  animation-delay: -0.7s;
+  transform: rotate(150deg) translate(120%);
+}
+.spinner div:nth-child(7) {
+  animation-delay: -0.6s;
+  transform: rotate(180deg) translate(120%);
+}
+.spinner div:nth-child(8) {
+  animation-delay: -0.5s;
+  transform: rotate(210deg) translate(120%);
+}
+.spinner div:nth-child(9) {
+  animation-delay: -0.4s;
+  transform: rotate(240deg) translate(120%);
+}
+.spinner div:nth-child(10) {
+  animation-delay: -0.3s;
+  transform: rotate(270deg) translate(120%);
+}
+.spinner div:nth-child(11) {
+  animation-delay: -0.2s;
+  transform: rotate(300deg) translate(120%);
+}
+.spinner div:nth-child(12) {
+  animation-delay: -0.1s;
+  transform: rotate(330deg) translate(120%);
+}
+
+@keyframes spinner {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
