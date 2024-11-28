@@ -10,21 +10,6 @@ export function uint8ArrayToBase64(bytes: Uint8Array): string {
 }
 
 /**
- * Convert a Uint8Array to an Ethereum-style hex string
- * @param arr - The Uint8Array to convert
- * @returns The Ethereum-style hex string
- */
-export function uint8ArrayToEthereumHexString(arr: Uint8Array): string {
-  const first65Bytes = arr.slice(0, 65);
-  return (
-    "0x" +
-    Array.from(first65Bytes, (byte: number) =>
-      byte.toString(16).padStart(2, "0")
-    ).join("")
-  );
-}
-
-/**
  * Shorten an Algorand address for display purposes
  * @param address - The full Algorand address
  * @param chars - The number of characters to show at the start and end

@@ -2,13 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { SiwaMessage } from "@avmkit/siwa";
-import useSIWAAccount from "@/hooks/useSIWAAccount";
 import JSONViewer from "./JsonViewer";
 import LoadingSpinner from "./LoadingSpinner";
-import {
-  uint8ArrayToBase64,
-  uint8ArrayToEthereumHexString,
-} from "@/utils/siwaUtils";
+import { uint8ArrayToBase64 } from "@/utils/siwaUtils";
 import ConnectedNote from "./ConnectedNote";
 import PeraConnectButton from "./PeraConnectButton";
 import DeflyConnectButton from "./DeflyConnectButton";
@@ -19,15 +15,17 @@ import {
 } from "@/hooks/useWalletConnection";
 import { Button } from "./Button";
 import { Alert } from "./Alert";
+import { KibisisConnectButton } from "./KibisisConnectButton";
+import LuteConnectButton from "./LuteConnectButton";
 
 /**
  * SIWAConnect Component
- * This component handles the Sign-In with Algorand (SIWA) flow using Pera Wallet and Defly Wallet
+ * This component handles the Sign-In with Algorand (SIWA) flow using Pera Wallet and Defly Wallet and Kibisis Wallet and Lute Wallet.
  */
 export default function SIWAConnect() {
   // Custom hook to manage wallet connections
   const {
-    algoAddress,
+    address,
     provider,
     isLoading,
     connectWallet,
@@ -38,32 +36,31 @@ export default function SIWAConnect() {
   // State management
   const [signedMessage, setSignedMessage] = useState<string | null>(null);
   const [pendingProvider, setPendingProvider] = useState<WalletProvider | null>(
-    null
+    null,
   );
   const [signing, setSigning] = useState(false);
   const [fullSigningMessage, setFullSigningMessage] = useState<any | null>(
-    null
+    null,
   );
   const [credentials, setCredentials] = useState<any | null>(null);
   const [error, setError] = useState<any | null>(null);
   const [verificationResult, setVerificationResult] = useState<any | null>(
-    null
+    null,
   );
   const [siwaMessageInstance, setSiwaMessageInstance] =
     useState<SiwaMessage | null>(null);
   const [activeStep, setActiveStep] = useState(0);
 
   // Custom hook to get the SIWA account
-  const { address } = useSIWAAccount(algoAddress || "");
 
-  // Effect to update activeStep when algoAddress changes
+  // Effect to update activeStep when address changes
   useEffect(() => {
-    if (algoAddress) {
+    if (address) {
       setActiveStep(1);
     } else {
       setActiveStep(0);
     }
-  }, [algoAddress]);
+  }, [address]);
 
   /**
    * Wrapper function for connectWallet to handle errors
@@ -111,12 +108,14 @@ export default function SIWAConnect() {
     setError(null);
     setSigning(true);
     try {
-      const domain = window.location.host;
+      const uri = typeof window !== "undefined" ? window.location.origin : "";
+      const domain = typeof window !== "undefined" ? window.location.host : "";
+
       const siwaMessage = new SiwaMessage({
         domain,
         address,
         statement: "Sign in with Algorand to the app.",
-        uri: window.location.origin,
+        uri,
         version: "1",
         chainId: 416001,
         nonce: "randomNonce123", // In production, use a secure random nonce
@@ -126,16 +125,16 @@ export default function SIWAConnect() {
       setFullSigningMessage(siwaMessage);
 
       const messageToSign = siwaMessage.prepareMessage();
-      const signature = await signMessage(messageToSign);
+      const { signature, transaction: encodedTransaction} = await signMessage(messageToSign);
 
       const algoSig = uint8ArrayToBase64(signature);
-      const ethSig = uint8ArrayToEthereumHexString(signature);
 
       setCredentials({
         message: JSON.stringify(siwaMessage),
-        signature: ethSig,
-        algoAddress: algoAddress,
-        algoSignature: algoSig,
+        encodedTransaction: encodedTransaction || null,
+        provider: provider || null,
+        signature: algoSig,
+        address: address,
       });
 
       setSignedMessage(Buffer.from(signature).toString("base64"));
@@ -160,15 +159,16 @@ export default function SIWAConnect() {
     setError(null);
     try {
       const siwaMessage = new SiwaMessage(
-        JSON.parse(credentials?.message || "{}")
+        JSON.parse(credentials?.message || "{}"),
       );
 
+      //const algoSigBase64 = uint8ArrayToBase64(credentials?.signature);
+
       const verifyParams = {
-        signature: credentials.signature,
-        domain: window.location.host,
-        address: address || undefined,
-        algoAddress: algoAddress || undefined,
-        algoSignature: credentials.algoSignature,
+        signature: credentials?.signature,
+        domain: typeof window !== "undefined" ? window.location.host : "",
+        provider: provider || null,
+        encodedTransaction: credentials?.encodedTransaction || null,
       };
 
       const result = await siwaMessage.verify(verifyParams);
@@ -195,12 +195,20 @@ export default function SIWAConnect() {
         return (
           <div className="space-y-4">
             <PeraConnectButton
-              isLoading={isLoading && pendingProvider === "PeraWallet"}
-              onConnect={() => handleConnectWallet("PeraWallet")}
+              isLoading={isLoading && pendingProvider === "Pera"}
+              onConnect={() => handleConnectWallet("Pera")}
             />
             <DeflyConnectButton
               onConnect={() => handleConnectWallet("Defly")}
               isLoading={isLoading && pendingProvider === "Defly"}
+            />
+            <KibisisConnectButton
+              isLoading={isLoading && pendingProvider === "Kibisis"}
+              onConnect={() => handleConnectWallet("Kibisis")}
+            />
+            <LuteConnectButton
+              onConnect={() => handleConnectWallet("Lute")}
+              isLoading={isLoading && pendingProvider === "Lute"}
             />
           </div>
         );
@@ -215,7 +223,11 @@ export default function SIWAConnect() {
       case 2:
         return (
           <div>
-            <Button className="h-12 w-full" onClick={verifySIWAMessage} disabled={isLoading}>
+            <Button
+              className="h-12 w-full"
+              onClick={verifySIWAMessage}
+              disabled={isLoading}
+            >
               {isLoading ? <LoadingSpinner /> : "Verify SIWA Message"}
             </Button>
           </div>
@@ -250,11 +262,7 @@ export default function SIWAConnect() {
               </h2>
               <div className="transition-opacity duration-300 ease-in-out">
                 {activeStep > 0 && activeStep < 3 && (
-                  <ConnectedNote
-                    address={address}
-                    algoAddress={algoAddress}
-                    provider={provider}
-                  />
+                  <ConnectedNote address={address} provider={provider} />
                 )}
                 {renderStep()}
               </div>
@@ -285,7 +293,9 @@ export default function SIWAConnect() {
               >
                 {error && (
                   <Alert variant="error">
-                    <p className="text-sm">{error.message || "An error occurred"}</p>
+                    <p className="text-sm">
+                      {error.message || "An error occurred"}
+                    </p>
                   </Alert>
                 )}
               </div>

@@ -9,9 +9,9 @@ const StepExplanation: React.FC<StepExplanationProps> = ({ activeStep }) => {
   const steps = [
     {
       title: "Step 1: Connect Wallet",
-      description: "In this step, you'll connect your Algorand wallet to the application. You can choose between Pera Wallet and Defly Wallet.",
+      description: "In this step, you'll connect your Algorand wallet to the application. You can choose between Pera, Defly, Lute, or Kibisis wallets.",
       details: [
-        "Click on the 'Connect Pera Wallet' or 'Connect Defly Wallet' button.",
+        "Click on the 'Connect Wallet button.",
         "Your chosen wallet app will open and ask for permission to connect.",
         "Once connected, your Algorand address will be displayed, and you'll move to the next step.",
       ],
